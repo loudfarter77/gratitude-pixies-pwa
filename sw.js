@@ -1,4 +1,4 @@
-const CACHE = 'gratitude-pixies-v3';
+const CACHE = 'gratitude-pixies-v1';
 const ASSETS = ['/', '/index.html'];
 
 self.addEventListener('install', e => {
