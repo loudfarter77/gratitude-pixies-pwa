@@ -649,20 +649,20 @@ function renderEntriesTab(t) {
     ${STATE.entries.length===0 ? `<div class="card"><div style="font-size:9px;color:${t.dim};line-height:14px;text-align:center">no entries yet~<br>start writing!</div></div>` :
     STATE.entries.map(e => {
       const et = THEMES[e.theme] || t;
-      return `<div class="entry-card" onclick="selEntry=STATE.entries.find(x=>x.id===${e.id});render('diary')" oncontextmenu="event.preventDefault();confirm('Delete entry?',()=>{deleteEntry(${e.id});render('diary')})" ontouchstart="lpStart(event,()=>confirm('Delete entry?',()=>{deleteEntry(${e.id});render('diary')}))" ontouchend="lpEnd()" ontouchmove="lpEnd()">
+      const preview = (e.answers||[]).filter(a=>a?.trim()).slice(0,2).map(a=>a.length>55?a.slice(0,55)+'...':a);
+      return `<div class="entry-card" onclick="selEntry=STATE.entries.find(x=>x.id===${e.id});render('diary')">
         <div class="card">
-          <div class="row" style="margin-bottom:8px">
-            ${spriteCanvas(`es-${e.id}`, e.theme||STATE.theme, 'idle', 3)}
-            <div style="flex:1">
-              <div style="font-size:9px;color:${et.accent};margin-bottom:2px">${e.date}</div>
-              <div style="font-size:9px;color:${t.muted};line-height:13px">${e.mode==='free'?'✍️ free write':e.promptSet}</div>
+          <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:8px">
+            <div class="row" style="flex:1;gap:8px">
+              ${spriteCanvas(`es-${e.id}`, e.theme||STATE.theme, 'idle', 3)}
+              <div>
+                <div style="font-size:9px;color:${et.accent};margin-bottom:2px">${e.date}</div>
+                <div style="font-size:8px;color:${t.muted};line-height:13px">${e.mode==='free'?'✍️ free write':e.promptSet}</div>
+              </div>
             </div>
+            <div onclick="event.stopPropagation();confirm('Delete entry?',()=>{deleteEntry(${e.id});render('diary')})" style="font-size:16px;color:${t.dim};padding:0 4px;cursor:pointer;line-height:1;flex-shrink:0">✕</div>
           </div>
-          <div style="font-size:9px;color:${t.muted};line-height:13px;margin-bottom:4px">${(e.answers||[]).filter(a=>a?.trim()).slice(0,2).join(' · ')}</div>
-          <div style="display:flex;justify-content:space-between;align-items:center">
-            <div style="font-size:9px;color:${t.dim}">▸ tap to read</div>
-            <div onclick="event.stopPropagation();confirm('Delete entry?',()=>{deleteEntry(${e.id});render('diary')})" style="font-size:9px;color:${t.dim};padding:4px 8px;cursor:pointer">✕</div>
-          </div>
+          ${preview.map(p=>`<div style="font-size:8px;color:${t.text};line-height:15px;margin-bottom:3px">${p}</div>`).join('')}
         </div>
       </div>`;
     }).join('')}`;
@@ -671,20 +671,19 @@ function renderEntriesTab(t) {
 function renderReviewsTab(t) {
   return STATE.reviews.length===0 ? `<div class="card"><div style="font-size:9px;color:${t.dim};line-height:14px;text-align:center">no reviews saved yet~<br>generate one above!</div></div>` :
   STATE.reviews.map(sr => `
-    <div class="entry-card" onclick="selReview=STATE.reviews.find(x=>x.id===${sr.id});render('diary')" oncontextmenu="event.preventDefault();confirm('Delete review?',()=>{deleteReview(${sr.id});render('diary')})" ontouchstart="lpStart(event,()=>confirm('Delete review?',()=>{deleteReview(${sr.id});render('diary')}))" ontouchend="lpEnd()" ontouchmove="lpEnd()">
+    <div class="entry-card" onclick="selReview=STATE.reviews.find(x=>x.id===${sr.id});render('diary')">
       <div class="card">
-        <div class="row" style="margin-bottom:8px">
-          ${spriteCanvas(`rs-${sr.id}`, STATE.theme, 'happy', 3)}
-          <div style="flex:1">
-            <div style="font-size:9px;color:${t.accent};margin-bottom:2px">${sr.date}</div>
-            <div style="font-size:9px;color:${t.muted};line-height:13px">${sr.weekLabel}</div>
+        <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:8px">
+          <div class="row" style="flex:1;gap:8px">
+            ${spriteCanvas(`rs-${sr.id}`, STATE.theme, 'happy', 3)}
+            <div>
+              <div style="font-size:9px;color:${t.accent};margin-bottom:2px">${sr.date}</div>
+              <div style="font-size:8px;color:${t.muted};line-height:13px">${sr.weekLabel}</div>
+            </div>
           </div>
+          <div onclick="event.stopPropagation();confirm('Delete review?',()=>{deleteReview(${sr.id});render('diary')})" style="font-size:16px;color:${t.dim};padding:0 4px;cursor:pointer;line-height:1;flex-shrink:0">✕</div>
         </div>
-        <div style="font-size:9px;color:${t.muted};line-height:13px;margin-bottom:4px">${sr.text.slice(0,80)}...</div>
-        <div style="display:flex;justify-content:space-between;align-items:center">
-          <div style="font-size:9px;color:${t.dim}">▸ tap to read</div>
-          <div onclick="event.stopPropagation();confirm('Delete review?',()=>{deleteReview(${sr.id});render('diary')})" style="font-size:9px;color:${t.dim};padding:4px 8px;cursor:pointer">✕</div>
-        </div>
+        <div style="font-size:8px;color:${t.text};line-height:15px">${sr.text.length>120?sr.text.slice(0,120)+'...':sr.text}</div>
       </div>
     </div>`).join('');
 }
